@@ -11,14 +11,8 @@ export const locationSchema = z.object({
     .string()
     .min(1, 'Branch phone is required')
     .regex(IRAQI_PHONE_REGEX, 'Enter a valid Iraqi phone number'),
-  lat: z.preprocess(
-    (v) => (v === '' || v === null || v === undefined ? null : parseFloat(String(v))),
-    z.number().min(-90).max(90).nullable().optional()
-  ),
-  lng: z.preprocess(
-    (v) => (v === '' || v === null || v === undefined ? null : parseFloat(String(v))),
-    z.number().min(-180).max(180).nullable().optional()
-  ),
+  lat: z.coerce.number().min(-90).max(90).nullable().optional(),
+  lng: z.coerce.number().min(-180).max(180).nullable().optional(),
   arrivalInstructions: z.string().optional(),
   photoUrl: z.string().optional(),
 });

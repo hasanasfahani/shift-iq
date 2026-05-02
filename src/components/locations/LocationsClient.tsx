@@ -94,7 +94,8 @@ export default function LocationsClient({ initialLocations }: Props) {
     reset,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<LocationInput>({ resolver: zodResolver(locationSchema) });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } = useForm<LocationInput>({ resolver: zodResolver(locationSchema) as any });
 
   const cityOptions = CITIES.map((c) => ({ value: c, label: t(`cities.${c}`) }));
 
@@ -171,7 +172,8 @@ export default function LocationsClient({ initialLocations }: Props) {
     return publicUrl;
   }
 
-  async function onSubmit(data: LocationInput) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async function onSubmit(data: any) {
     if (editingLocation) {
       let photoUrl = data.photoUrl ?? '';
       if (photoFile) {
