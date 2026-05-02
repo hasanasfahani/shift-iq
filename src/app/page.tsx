@@ -81,7 +81,7 @@ const HOW_IT_WORKS_PRO = [
 
 const JOB_CATEGORIES = [
   { name: 'Hospitality', img: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80' },
-  { name: 'Bartending', img: 'https://images.unsplash.com/photo-1571950006080-46d620d75534?w=400&q=80' },
+  { name: 'Bartending', img: 'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=400&q=80' },
   { name: 'Events', img: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=400&q=80' },
   { name: 'Food & Beverage', img: 'https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=400&q=80' },
   { name: 'Retail', img: 'https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?w=400&q=80' },

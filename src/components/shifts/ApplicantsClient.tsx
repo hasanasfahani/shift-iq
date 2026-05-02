@@ -280,7 +280,7 @@ function ApplicantCard({
   const visibleExperiences = showAllExp ? experiences : experiences.slice(0, 2);
 
   return (
-    <div className="bg-white rounded-2xl border border-[#E7E2EF] shadow-sm overflow-hidden">
+    <div className="tap-card bg-white rounded-2xl border border-[#E7E2EF] shadow-sm overflow-hidden">
       {/* Top section: identity + stats */}
       <div className="p-5">
         <div className="flex items-start gap-4">

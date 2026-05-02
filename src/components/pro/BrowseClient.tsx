@@ -355,7 +355,7 @@ export default function BrowseClient({
               <Link
                 key={shift.id}
                 href={`/pro/shifts/${shift.id}`}
-                className="bg-white rounded-2xl border border-[#E7E2EF] shadow-sm hover:shadow-md hover:border-[#7426E8]/30 transition-all block overflow-hidden"
+                className="tap-card bg-white rounded-2xl border border-[#E7E2EF] shadow-sm hover:shadow-md hover:border-[#7426E8]/30 block overflow-hidden"
               >
                 {venuePhoto ? (
                   <div className="h-28 overflow-hidden relative">

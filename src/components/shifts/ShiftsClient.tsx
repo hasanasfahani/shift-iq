@@ -207,7 +207,7 @@ function ShiftCard({
   const isAlmostFull = fillPct >= 80 && shift.status === 'open';
 
   return (
-    <div className="bg-white rounded-2xl border border-[#E7E2EF] shadow-sm overflow-hidden">
+    <div className="tap-card bg-white rounded-2xl border border-[#E7E2EF] shadow-sm overflow-hidden">
       {/* Venue photo header */}
       {venuePhoto && (
         <div className="h-32 overflow-hidden relative">
