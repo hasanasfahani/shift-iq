@@ -1,26 +1,142 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ─── Design Tokens ─────────────────────────────────────────── */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Brand green */
+  --color-brand-green: #28D96D;
+  --color-brand-green-cta: #00F06A;
+
+  /* Forest */
+  --color-forest: #0F3D36;
+  --color-forest-secondary: #15594D;
+
+  /* Ink / text */
+  --color-ink: #12051F;
+  --color-muted: #8B8299;
+  --color-disabled: #C9C4D2;
+
+  /* Lavender surfaces */
+  --color-lavender: #F3F0FB;
+  --color-card-lavender: #F7F4FC;
+
+  /* Purple accent */
+  --color-purple: #7426E8;
+  --color-purple-soft: #E9DEFF;
+
+  /* Mint */
+  --color-mint: #DDF4EA;
+
+  /* Border */
+  --color-border-color: #E7E2EF;
+
+  /* Rating */
+  --color-rating-yellow: #FFB536;
+
+  /* Legacy brand palette (kept for compatibility) */
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+
+  /* Surface / neutral */
+  --color-surface: #ffffff;
+  --color-surface-secondary: #f8fafc;
+  --color-border: #E7E2EF;
+  --color-text-primary: #12051F;
+  --color-text-secondary: #8B8299;
+  --color-text-muted: #C9C4D2;
+
+  /* Status colours — shift badges */
+  --color-status-open: #28D96D;
+  --color-status-filled: #f59e0b;
+  --color-status-completed: #15594D;
+  --color-status-cancelled: #8B8299;
+
+  /* Fonts */
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Base ───────────────────────────────────────────────────── */
+
+:root {
+  --background: #ffffff;
+  --foreground: #12051F;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── RTL Support ────────────────────────────────────────────── */
+/* Toggled by setting dir="rtl" on <html>.
+   Components use Tailwind logical properties (ms/me, ps/pe)
+   so this dir switch handles mirroring automatically.         */
+
+[dir="rtl"] {
+  letter-spacing: 0;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────── */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #E7E2EF transparent;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ─── Smooth scroll ──────────────────────────────────────────── */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ─── Keyframes ──────────────────────────────────────────────── */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80%      { transform: translateX(5px); }
+}
+
+@keyframes scrollBounce {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50%      { transform: translateY(6px); opacity: 1; }
+}
+
+/* ─── Animation utilities ────────────────────────────────────── */
+
+.animate-float {
+  animation: float 3.5s ease-in-out infinite;
+}
+
+.animate-shake {
+  animation: shake 0.45s ease-in-out;
+}
+
+.animate-scroll-bounce {
+  animation: scrollBounce 1.6s ease-in-out infinite;
 }

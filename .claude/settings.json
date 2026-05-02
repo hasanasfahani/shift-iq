@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@latest . --typescript --tailwind --app --src-dir --import-alias \"@/*\" --no-eslint --yes)",
+      "Read(//Users/hasanasfahani/Desktop/**)",
+      "Bash(npx create-next-app@latest shift-iq-app --typescript --tailwind --app --src-dir --import-alias \"@/*\" --no-eslint --yes)",
+      "Bash(cp -r /Users/hasanasfahani/Desktop/shift-iq-app/. /Users/hasanasfahani/Desktop/Shift.iq/)",
+      "Bash(rm -rf /Users/hasanasfahani/Desktop/shift-iq-app)",
+      "Bash(npm pkg *)",
+      "Bash(npm install *)",
+      "Bash(node -e ' *)",
+      "Bash(npx tsc *)",
+      "Bash(node /Users/hasanasfahani/Desktop/Shift.iq/node_modules/typescript/lib/tsc.js --noEmit)",
+      "Bash(timeout 20 npm run dev)",
+      "Bash(npm run *)",
+      "Bash(kill %1)",
+      "Bash(wait)"
+    ]
+  }
+}
