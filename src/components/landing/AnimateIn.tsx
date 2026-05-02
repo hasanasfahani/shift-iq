@@ -16,17 +16,24 @@ export default function AnimateIn({
   className = '',
   delay = 0,
   direction = 'up',
-  distance = 28,
+  distance = 20,
   threshold = 0.1,
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
+  const [reduced, setReduced] = useState(false);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    setReduced(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }, []);
+
+  useEffect(() => {
+    if (reduced) { setVisible(true); return; }
     const el = ref.current;
     if (!el) return;
 
-    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+    if (!('IntersectionObserver' in window)) {
       setVisible(true);
       return;
     }
@@ -42,7 +49,7 @@ export default function AnimateIn({
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [threshold]);
+  }, [threshold, reduced]);
 
   const getHiddenTransform = (): string => {
     switch (direction) {
@@ -54,11 +61,13 @@ export default function AnimateIn({
     }
   };
 
-  const style: CSSProperties = {
-    opacity: visible ? 1 : 0,
-    transform: visible ? 'none' : getHiddenTransform(),
-    transition: `opacity 0.65s ease-out ${delay}ms, transform 0.65s ease-out ${delay}ms`,
-  };
+  const style: CSSProperties = reduced
+    ? {}
+    : {
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'none' : getHiddenTransform(),
+        transition: `opacity 0.4s ease-out ${delay}ms, transform 0.4s ease-out ${delay}ms`,
+      };
 
   return (
     <div ref={ref} className={className} style={style}>

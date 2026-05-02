@@ -74,6 +74,17 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Eliminate 300ms tap delay on iOS Safari for all interactive elements */
+a, button, [role="button"], input, select, textarea, label {
+  touch-action: manipulation;
+}
+
+/* Prevent scroll-chaining / rubber-band bleed on app shell containers */
+.scroll-area {
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
 /* ─── RTL Support ────────────────────────────────────────────── */
 /* Toggled by setting dir="rtl" on <html>.
    Components use Tailwind logical properties (ms/me, ps/pe)
@@ -152,6 +163,7 @@ html {
 
 .animate-float {
   animation: float 3.5s ease-in-out infinite;
+  will-change: transform;
 }
 
 .animate-shake {
@@ -183,4 +195,20 @@ html {
 .tap-card:active {
   transform: scale(0.985);
   box-shadow: 0 1px 4px rgba(18, 5, 31, 0.08);
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-shake,
+  .animate-scroll-bounce,
+  .animate-nav-pop,
+  .animate-fade-slide-up,
+  .animate-success-pulse {
+    animation: none !important;
+  }
+  .tap-card {
+    transition: none !important;
+  }
 }

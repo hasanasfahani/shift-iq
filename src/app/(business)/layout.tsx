@@ -25,7 +25,7 @@ export default async function BusinessLayout({ children }: { children: ReactNode
       <TopBar userName={userData.full_name} role="business" />
       <div className="flex flex-1 overflow-hidden">
         <BusinessSidebar />
-        <main className="flex-1 overflow-y-auto bg-white p-4 pb-20 lg:p-6 lg:pb-6">
+        <main className="flex-1 overflow-y-auto scroll-area bg-white p-4 pb-20 lg:p-6 lg:pb-6">
           {children}
         </main>
       </div>

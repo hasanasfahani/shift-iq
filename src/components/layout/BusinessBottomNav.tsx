@@ -59,7 +59,7 @@ export default function BusinessBottomNav() {
   const { t } = useTranslation();
 
   return (
-    <nav className="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-sm border-t border-[#E7E2EF] flex lg:hidden z-40">
+    <nav className="fixed bottom-0 inset-x-0 bg-white border-t border-[#E7E2EF] flex lg:hidden z-40">
       {NAV_ITEMS.map((item) => {
         const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
 

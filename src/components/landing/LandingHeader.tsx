@@ -47,7 +47,7 @@ export default function LandingHeader() {
   return (
     <header
       className={[
-        'fixed top-0 inset-x-0 z-50 transition-all duration-300',
+        'fixed top-0 inset-x-0 z-50 transition-[background-color,box-shadow,border-color] duration-300',
         scrolled
           ? 'bg-[#0F3D36]/95 backdrop-blur-md border-b border-white/10 shadow-lg shadow-black/20'
           : 'bg-[#0F3D36]',
@@ -132,7 +132,7 @@ export default function LandingHeader() {
       {/* Mobile dropdown — animated with max-height */}
       <div
         className={[
-          'lg:hidden overflow-hidden transition-all duration-300 ease-in-out',
+          'lg:hidden overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out',
           'bg-[#0F3D36] border-t border-white/10',
           menuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0',
         ].join(' ')}

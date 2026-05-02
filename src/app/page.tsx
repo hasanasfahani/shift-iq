@@ -308,7 +308,7 @@ export default function LandingPage() {
             {JOB_CATEGORIES.map((cat, i) => (
               <AnimateIn key={cat.name} delay={i * 60}>
                 <Link href="/signup/pro" className="group relative aspect-square rounded-2xl overflow-hidden block">
-                  <Image src={cat.img} alt={cat.name} fill className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-105" />
+                  <Image src={cat.img} alt={cat.name} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-105" />
                   <div className="absolute inset-0 bg-[#12051F]/50 group-hover:bg-[#7426E8]/60 transition-colors duration-500 ease-in-out" />
                   <span className="absolute bottom-0 inset-x-0 p-4 text-white font-bold text-sm">{cat.name}</span>
                 </Link>
