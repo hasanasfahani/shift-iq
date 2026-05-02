@@ -104,7 +104,7 @@ export default function ShiftDetailClient({
     const label = statusLabels[currentStatus ?? 'pending'] ?? 'Applied';
 
     return (
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-[#E7E2EF] shadow-lg px-4 py-4 lg:px-8">
+      <div className="fixed bottom-16 lg:bottom-0 left-0 right-0 z-40 bg-white border-t border-[#E7E2EF] shadow-lg px-4 py-4 lg:px-8">
         <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
           <div>
             <p className="text-xs text-[#8B8299]">Your total estimated pay</p>
@@ -118,7 +118,7 @@ export default function ShiftDetailClient({
 
   if (!onboardingComplete) {
     return (
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-[#E7E2EF] shadow-lg px-4 py-4 lg:px-8">
+      <div className="fixed bottom-16 lg:bottom-0 left-0 right-0 z-40 bg-white border-t border-[#E7E2EF] shadow-lg px-4 py-4 lg:px-8">
         <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
           <div>
             <p className="text-xs text-[#8B8299]">Complete your profile to apply</p>
@@ -139,7 +139,7 @@ export default function ShiftDetailClient({
     <>
       {/* Confirmation sheet */}
       {showConfirm && (hasClothingRules || hasCancellationPolicy || missingSkills.length > 0) ? (
-        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-[#E7E2EF] shadow-2xl rounded-t-3xl px-5 pt-5 pb-6 lg:px-8">
+        <div className="fixed bottom-16 lg:bottom-0 left-0 right-0 z-40 bg-white border-t border-[#E7E2EF] shadow-2xl rounded-t-3xl px-5 pt-5 pb-6 lg:px-8">
           <div className="max-w-2xl mx-auto">
             <h3 className="text-base font-black text-[#12051F] mb-4">Before you apply</h3>
 
@@ -204,7 +204,7 @@ export default function ShiftDetailClient({
           </div>
         </div>
       ) : (
-        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-[#E7E2EF] shadow-lg px-4 py-4 lg:px-8">
+        <div className="fixed bottom-16 lg:bottom-0 left-0 right-0 z-40 bg-white border-t border-[#E7E2EF] shadow-lg px-4 py-4 lg:px-8">
           <div className="max-w-2xl mx-auto">
             {missingSkills.length > 0 && !showConfirm && (
               <p className="text-xs text-amber-600 mb-2 flex items-center gap-1">
