@@ -82,7 +82,7 @@ export default function LoginForm({ next }: Props) {
       .eq('id', user!.id)
       .single();
 
-    const defaultRedirect = userData?.role === 'business' ? '/business/dashboard' : '/pro/dashboard';
+    const defaultRedirect = userData?.role === 'business' ? '/business/dashboard' : '/pro/browse';
     const redirectTo = next?.startsWith('/') ? next : defaultRedirect;
     router.push(redirectTo);
   }
