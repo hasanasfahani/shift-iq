@@ -22,8 +22,9 @@ export async function POST(request: NextRequest) {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error || !data.user) {
+    console.error('[login] supabase error:', error, 'email used:', email);
     return NextResponse.json(
-      { error: 'Invalid phone number or password.' },
+      { error: 'Invalid phone number or password.', _debug: error?.message },
       { status: 401 }
     );
   }
@@ -36,7 +37,7 @@ export async function POST(request: NextRequest) {
     .single();
 
   const defaultRedirect =
-    userData?.role === 'business' ? '/business/dashboard' : '/pro/dashboard';
+    userData?.role === 'business' ? '/business/dashboard' : '/pro/browse';
 
   // Use ?next only if it's a safe internal path
   const redirectTo = next?.startsWith('/') ? next : defaultRedirect;

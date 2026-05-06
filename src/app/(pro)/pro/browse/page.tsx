@@ -1,6 +1,13 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { createClient as createAdminClient } from '@supabase/supabase-js';
 import BrowseClient from '@/components/pro/BrowseClient';
+
+const adminClient = createAdminClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  { auth: { autoRefreshToken: false, persistSession: false } }
+);
 
 export default async function BrowseShiftsPage({
   searchParams,
@@ -15,11 +22,11 @@ export default async function BrowseShiftsPage({
   let query = supabase
     .from('shifts')
     .select(`
-      id, job_title, date, start_time, end_time, duration_hours,
+      id, business_id, job_title, date, start_time, end_time, duration_hours,
       workers_needed, pro_hourly_rate_iqd, shift_type, description, status,
       special_badge, created_at,
       business_locations ( branch_name, city, address, branch_phone, photos ),
-      users ( business_profiles ( business_name, is_verified ) )
+      users ( business_profiles ( business_name, is_verified, business_type ) )
     `)
     .eq('status', 'open')
     .order('date', { ascending: true });
@@ -58,10 +65,24 @@ export default async function BrowseShiftsPage({
     });
   }
 
-  // Attach accepted count to each shift
+  // Fetch business profiles via admin client (bypasses RLS — service role, server only)
+  const businessIds = [...new Set(result.map((s) => s.business_id).filter(Boolean))];
+  let businessTypeMap: Record<string, string> = {};
+  if (businessIds.length > 0) {
+    const { data: profiles } = await adminClient
+      .from('business_profiles')
+      .select('user_id, business_type')
+      .in('user_id', businessIds);
+    (profiles ?? []).forEach((p: any) => {
+      businessTypeMap[p.user_id] = p.business_type;
+    });
+  }
+
+  // Attach accepted count and flatten business info to each shift
   result = result.map((s) => ({
     ...s,
     accepted_count: acceptedCountMap[s.id] ?? 0,
+    _business_type: businessTypeMap[s.business_id] ?? null,
   }));
 
   // Sort

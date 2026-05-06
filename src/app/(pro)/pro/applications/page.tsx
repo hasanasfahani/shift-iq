@@ -16,7 +16,7 @@ export default async function ProApplicationsPage() {
           id, job_title, date, start_time, end_time, duration_hours,
           pro_hourly_rate_iqd, status, business_id,
           business_locations ( branch_name, city, address, branch_phone ),
-          users ( business_profiles ( business_name ) )
+          users ( business_profiles ( business_name, business_type ) )
         )
       `)
       .eq('pro_id', user.id)

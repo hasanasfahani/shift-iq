@@ -1,6 +1,6 @@
 import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { formatIQD, SPECIAL_BADGES, CANCELLATION_POLICIES, PAYMENT_TERMS } from '@/lib/constants';
 import ShiftDetailClient from '@/components/pro/ShiftDetailClient';
 import ExpandableText from '@/components/ui/ExpandableText';
@@ -54,6 +54,14 @@ export default async function ShiftDetailPage({
 
   if (!shift || shift.status !== 'open') notFound();
 
+  // Fetch business_type via service client — RLS blocks pro users from reading business_profiles
+  const admin = await createServiceClient();
+  const { data: bizProfile } = await admin
+    .from('business_profiles')
+    .select('business_type')
+    .eq('user_id', (shift as any).business_id)
+    .single();
+
   // Accepted count for spots remaining
   const { count: acceptedCount } = await supabase
     .from('applications')
@@ -67,6 +75,8 @@ export default async function ShiftDetailPage({
   const business = (shift.users as any)?.business_profiles;
   const businessName = business?.business_name ?? 'Business';
   const totalPay = Math.round(shift.duration_hours * shift.pro_hourly_rate_iqd);
+  const businessType = bizProfile?.business_type ?? business?.business_type;
+  const maskedBusinessName = businessType ?? 'Business';
   const badgeInfo = SPECIAL_BADGES.find((b) => b.value === shift.special_badge);
 
   const proSkills: string[] = proProfile?.skills_by_role?.[shift.job_title] ?? [];
@@ -86,6 +96,7 @@ export default async function ShiftDetailPage({
 
   const alreadyApplied = !!existingApp;
   const appStatus = existingApp?.status ?? null;
+  const isAccepted = appStatus === 'accepted';
 
   const cancellationLabel =
     CANCELLATION_POLICIES.find((p) => p.value === shift.cancellation_policy)?.label ??
@@ -111,12 +122,19 @@ export default async function ShiftDetailPage({
       {/* Hero card */}
       <div className="bg-white rounded-3xl border border-[#E7E2EF] overflow-hidden mb-4 shadow-sm">
         {location?.photos?.[0] ? (
-          <div className="h-40 overflow-hidden">
+          <div className="h-40 overflow-hidden relative">
             <img
               src={location.photos[0]}
               alt={location.branch_name}
-              className="w-full h-full object-cover"
+              className={`w-full h-full object-cover ${!isAccepted ? 'blur-md scale-110' : ''}`}
             />
+            {!isAccepted && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="bg-black/40 text-white text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-sm">
+                  Revealed after acceptance
+                </span>
+              </div>
+            )}
           </div>
         ) : (
           <div className="h-32 bg-gradient-to-br from-[#0F3D36] to-[#1a5a4e] flex items-center justify-center">
@@ -152,18 +170,20 @@ export default async function ShiftDetailPage({
           {/* Business block */}
           <div className="flex items-center gap-2 mb-4">
             <div className="w-8 h-8 rounded-full bg-[#F3F0FB] flex items-center justify-center text-sm font-bold text-[#7426E8] shrink-0">
-              {businessName.charAt(0)}
+              {isAccepted ? businessName.charAt(0) : '?'}
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="text-sm font-semibold text-[#12051F]">{businessName}</span>
-                {business?.is_verified && (
+                <span className="text-sm font-semibold text-[#12051F]">
+                  {isAccepted ? businessName : maskedBusinessName}
+                </span>
+                {isAccepted && business?.is_verified && (
                   <svg className="w-4 h-4 text-[#28D96D]" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
                 )}
               </div>
-              {business?.average_rating > 0 && (
+              {isAccepted && business?.average_rating > 0 && (
                 <div className="flex items-center gap-1 mt-0.5">
                   <svg className="w-3.5 h-3.5 text-[#FFB536]" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -213,25 +233,34 @@ export default async function ShiftDetailPage({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
             <div>
-              <p className="text-sm font-medium text-[#12051F]">{location?.branch_name}</p>
-              <p className="text-xs text-[#8B8299]">{location?.address}, {location?.city}</p>
-              {(location?.lat && location?.lng) && (
-                <a
-                  href={`https://maps.google.com/?q=${location.lat},${location.lng}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-[#7426E8] hover:underline mt-0.5 inline-block"
-                >
-                  Open in Maps →
-                </a>
+              {isAccepted ? (
+                <>
+                  <p className="text-sm font-medium text-[#12051F]">{location?.branch_name}</p>
+                  <p className="text-xs text-[#8B8299]">{location?.address}, {location?.city}</p>
+                  {(location?.lat && location?.lng) && (
+                    <a
+                      href={`https://maps.google.com/?q=${location.lat},${location.lng}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-[#7426E8] hover:underline mt-0.5 inline-block"
+                    >
+                      Open in Maps →
+                    </a>
+                  )}
+                </>
+              ) : (
+                <>
+                  <p className="text-sm font-medium text-[#12051F]">{location?.city ?? 'Iraq'}</p>
+                  <p className="text-xs text-[#8B8299]">Exact address revealed after acceptance</p>
+                </>
               )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Map embed */}
-      {location?.lat && location?.lng && (
+      {/* Map embed — only after acceptance */}
+      {isAccepted && location?.lat && location?.lng && (
         <MapEmbed lat={location.lat} lng={location.lng} label={location.branch_name} />
       )}
 
@@ -349,8 +378,8 @@ export default async function ShiftDetailPage({
         )}
       </div>
 
-      {/* Arrival instructions */}
-      {location?.arrival_instructions && (
+      {/* Arrival instructions — only after acceptance */}
+      {isAccepted && location?.arrival_instructions && (
         <div className="bg-[#F7F4FC] rounded-2xl border border-[#E7E2EF] px-4 py-3 mb-4 flex items-start gap-2.5">
           <svg className="w-4 h-4 text-[#7426E8] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -358,6 +387,19 @@ export default async function ShiftDetailPage({
           <p className="text-sm text-[#8B8299]">{location.arrival_instructions}</p>
         </div>
       )}
+
+      {/* Platform protection note */}
+      <div className="bg-[#F0FDF4] border border-[#BBF7D0] rounded-2xl px-4 py-3 mb-4 flex items-start gap-2.5">
+        <svg className="w-4 h-4 text-[#16A34A] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+        <div>
+          <p className="text-xs font-semibold text-[#15803D] mb-0.5">Your rights are protected</p>
+          <p className="text-xs text-[#166534] leading-relaxed">
+            Applying through Shift.iq ensures your pay, working conditions, and identity are handled safely. Business details are revealed only after acceptance to protect both parties.
+          </p>
+        </div>
+      </div>
 
       {/* Sticky bottom apply bar */}
       <ShiftDetailClient

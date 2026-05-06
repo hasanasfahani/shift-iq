@@ -128,6 +128,37 @@ export default async function ProDashboardPage() {
         </div>
       </div>
 
+      {/* ── AD BANNER ── */}
+      <div className="relative rounded-2xl overflow-hidden border border-[#E7E2EF] bg-gradient-to-r from-[#12051F] to-[#2D1060]">
+        <div className="absolute top-2 left-3 px-1.5 py-0.5 rounded text-[9px] font-bold tracking-widest text-white/40 uppercase">
+          Ad
+        </div>
+        <div className="px-5 pt-8 pb-5 flex items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold text-[#7426E8] mb-1 uppercase tracking-wide">Sponsored</p>
+            <p className="text-base font-black text-white leading-tight mb-1">
+              Reach 500+ hospitality pros in Kurdistan
+            </p>
+            <p className="text-xs text-white/50 leading-relaxed">
+              Advertise your venue or brand directly to verified workers on Shift.iq
+            </p>
+          </div>
+          <div className="shrink-0 w-12 h-12 rounded-2xl bg-[#7426E8]/20 flex items-center justify-center">
+            <svg className="w-6 h-6 text-[#7426E8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+            </svg>
+          </div>
+        </div>
+        <div className="px-5 pb-4">
+          <a
+            href="mailto:ads@shiftiq.app"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#7426E8] text-white text-xs font-bold hover:bg-[#6315d0] transition-colors"
+          >
+            Get in touch →
+          </a>
+        </div>
+      </div>
+
       {/* ── ONBOARDING / COMPLETENESS ── */}
       {profile?.onboarding_completed === false ? (
         <div className="rounded-2xl bg-gradient-to-r from-[#7426E8] to-[#9B51E0] p-px">
@@ -326,18 +357,21 @@ export default async function ProDashboardPage() {
           <p className="text-xs text-[#8B8299] mt-1 font-medium">Shifts completed</p>
         </div>
 
-        {/* Earnings */}
-        <div className="rounded-2xl bg-[#0F3D36] p-5">
+        {/* Earnings — links to Finance page */}
+        <Link href="/pro/finance" className="group rounded-2xl bg-[#0F3D36] p-5 hover:bg-[#1a5c4a] transition-colors">
           <div className="flex items-start justify-between mb-3">
-            <span className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
+            <span className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
               <svg className="w-4.5 h-4.5 text-[#28D96D]" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{width:'18px',height:'18px'}}>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </span>
+            <svg className="w-4 h-4 text-white/20 group-hover:text-[#28D96D] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
           </div>
           <p className="text-2xl font-black text-[#28D96D] tabular-nums leading-tight">{formatIQD(totalEarnings)}</p>
           <p className="text-xs text-white/40 mt-1 font-medium">Total earned</p>
-        </div>
+        </Link>
       </div>
 
       {/* ── UPCOMING SHIFTS ── */}

@@ -2,11 +2,29 @@
 
 import { useEffect, useState, useCallback } from 'react';
 
-interface Notification {
+interface RawNotification {
   id: string;
   message: string;
   is_read: boolean;
   created_at: string;
+}
+
+export interface Notification {
+  id: string;
+  message: string;
+  is_read: boolean;
+  created_at: string;
+  link?: string | null;
+}
+
+function parseNotification(raw: RawNotification): Notification {
+  const sep = raw.message.indexOf('||');
+  if (sep === -1) return raw;
+  return {
+    ...raw,
+    message: raw.message.slice(0, sep),
+    link: raw.message.slice(sep + 2),
+  };
 }
 
 export function useNotifications() {
@@ -17,7 +35,7 @@ export function useNotifications() {
     const res = await fetch('/api/notifications');
     if (!res.ok) return;
     const json = await res.json();
-    const list: Notification[] = json.notifications ?? [];
+    const list: Notification[] = (json.notifications ?? []).map(parseNotification);
     setNotifications(list);
     setUnreadCount(list.filter((n) => !n.is_read).length);
   }, []);

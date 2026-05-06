@@ -32,7 +32,8 @@ interface BrowseShift {
   status: string;
   created_at: string;
   business_locations: ShiftLocation;
-  users?: { business_profiles?: { business_name?: string; is_verified?: boolean } | null } | null;
+  users?: { business_profiles?: { business_name?: string; is_verified?: boolean; business_type?: string } | null } | null;
+  _business_type?: string | null;
 }
 
 interface Props {
@@ -343,7 +344,7 @@ export default function BrowseClient({
             const badgeInfo = SPECIAL_BADGES.find((b) => b.value === shift.special_badge);
             const venuePhoto = shift.business_locations?.photos?.[0];
             const businessName = shift.users?.business_profiles?.business_name;
-            const isVerified = shift.users?.business_profiles?.is_verified ?? false;
+            const businessType = shift._business_type ?? shift.users?.business_profiles?.business_type;
             const spotsLeft = Math.max(0, shift.workers_needed - (shift.accepted_count ?? 0));
             const fillPct = shift.workers_needed > 0
               ? Math.round(((shift.accepted_count ?? 0) / shift.workers_needed) * 100)
@@ -359,7 +360,7 @@ export default function BrowseClient({
               >
                 {venuePhoto ? (
                   <div className="h-28 overflow-hidden relative">
-                    <img src={venuePhoto} alt={shift.business_locations.branch_name} className="w-full h-full object-cover" />
+                    <img src={venuePhoto} alt={shift.business_locations.branch_name} className="w-full h-full object-cover blur-md scale-110" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                     <div className="absolute bottom-2 right-3 text-xs text-white/80">
                       {relativeTime(shift.created_at)}
@@ -394,18 +395,12 @@ export default function BrowseClient({
                   <div className="flex items-start justify-between gap-4 flex-wrap">
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-[#12051F] mb-0.5">{shift.job_title}</p>
-                      {businessName && (
-                        <p className="text-xs font-medium text-[#7426E8] mb-0.5 flex items-center gap-1">
-                          {businessName}
-                          {isVerified && (
-                            <svg className="w-3.5 h-3.5 text-[#28D96D] shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                              <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                          )}
+                      {businessType && (
+                        <p className="text-xs font-medium text-[#8B8299] mb-0.5">
+                          {businessType}
                         </p>
                       )}
                       <p className="text-sm text-[#8B8299]">
-                        {shift.business_locations.branch_name}{' '}
                         <span className="text-[#7426E8] bg-[#E9DEFF] text-xs rounded-full px-2 py-0.5">
                           {shift.business_locations.city}
                         </span>

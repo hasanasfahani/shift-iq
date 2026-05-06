@@ -115,7 +115,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'Is Shift.iq available in my city?',
-    a: 'We currently support Baghdad, Erbil, Basra, Sulaymaniyah, Mosul, Kirkuk, Najaf, and Karbala — with more cities coming soon.',
+    a: 'We are currently live in Erbil, Sulaymaniyah, and Duhok — with Baghdad, Basra, Mosul, Kirkuk, Najaf, and Karbala coming soon.',
   },
   {
     q: 'What does it cost for businesses?',
@@ -161,7 +161,7 @@ function FloatingJobCard() {
     <div className="bg-white rounded-2xl shadow-xl p-4 w-64 text-left">
       <div className="flex items-center justify-between mb-3">
         <span className="text-xs font-bold text-[#0F3D36] bg-[#DDF4EA] px-2 py-0.5 rounded-full">Open now</span>
-        <span className="text-xs text-[#8B8299]">Baghdad</span>
+        <span className="text-xs text-[#8B8299]">Erbil</span>
       </div>
       <p className="font-bold text-[#12051F] text-sm mb-1">Head Waiter · Grand Venue</p>
       <p className="text-xs text-[#8B8299] mb-3">Sat 3 May · 18:00 – 01:00 · 7 h</p>
@@ -196,8 +196,8 @@ export default function LandingPage() {
       <section className="relative min-h-screen flex items-center pt-16 overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=1600&q=80"
-            alt="Hospitality workers"
+            src="/hero-erbil.jpg"
+            alt="Erbil city skyline at night"
             fill
             className="object-cover"
             priority
@@ -368,7 +368,7 @@ export default function LandingPage() {
                 <div className="w-12 h-12 rounded-full bg-[#E9DEFF] flex items-center justify-center text-[#7426E8] font-bold text-lg">S</div>
                 <div>
                   <p className="font-bold text-[#12051F] text-sm">Sara Ahmed</p>
-                  <p className="text-xs text-[#8B8299]">Head Waitress · Baghdad</p>
+                  <p className="text-xs text-[#8B8299]">Head Waitress · Sulaymaniyah</p>
                 </div>
                 <div className="ml-auto">
                   <span className="bg-[#DDF4EA] text-[#0F3D36] text-xs font-bold px-2 py-0.5 rounded-full">Verified</span>
@@ -444,7 +444,7 @@ export default function LandingPage() {
                 <div className="w-14 h-14 rounded-full bg-[#E9DEFF] flex items-center justify-center text-[#7426E8] font-black text-xl">A</div>
                 <div>
                   <p className="font-bold text-[#12051F]">Ali Hassan</p>
-                  <p className="text-xs text-[#8B8299]">Bartender · Erbil</p>
+                  <p className="text-xs text-[#8B8299]">Bartender · Duhok</p>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-4 mb-5">

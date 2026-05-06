@@ -3,10 +3,11 @@
 export type UserRole = 'business' | 'pro';
 
 export type IraqiCity =
-  | 'Baghdad'
   | 'Erbil'
-  | 'Basra'
   | 'Sulaymaniyah'
+  | 'Duhok'
+  | 'Baghdad'
+  | 'Basra'
   | 'Mosul'
   | 'Kirkuk'
   | 'Najaf'

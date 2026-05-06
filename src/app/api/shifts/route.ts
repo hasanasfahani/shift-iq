@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { SHIFT_TYPES } from '@/lib/constants';
 import { calculatePlatformFee, computeDurationHours } from '@/lib/fee';
 
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
 
   const { data: location } = await supabase
     .from('business_locations')
-    .select('id')
+    .select('id, city')
     .eq('id', locationId)
     .eq('business_id', user.id)
     .single();
@@ -145,5 +145,68 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (error) return NextResponse.json({ error: 'Failed to create shift' }, { status: 500 });
+
+  // Notify matching pros — fire and forget, never block the response
+  notifyMatchingPros({
+    shiftId: shift.id,
+    jobTitle,
+    date,
+    proHourlyRateIQD,
+    city: (location as any).city,
+  }).catch(() => {});
+
   return NextResponse.json({ shift }, { status: 201 });
+}
+
+async function notifyMatchingPros({
+  shiftId,
+  jobTitle,
+  date,
+  proHourlyRateIQD,
+  city,
+}: {
+  shiftId: string;
+  jobTitle: string;
+  date: string;
+  proHourlyRateIQD: number;
+  city: string;
+}) {
+  const admin = await createServiceClient();
+
+  // Find all pros in the same city whose skills include this job title
+  const { data: cityUsers } = await admin
+    .from('users')
+    .select('id')
+    .eq('city', city)
+    .eq('role', 'pro');
+
+  if (!cityUsers?.length) return;
+
+  const cityUserIds = cityUsers.map((u: any) => u.id);
+
+  const { data: matchingPros } = await admin
+    .from('pro_profiles')
+    .select('user_id')
+    .in('user_id', cityUserIds)
+    .contains('skills', [jobTitle])
+    .eq('onboarding_completed', true)
+    .eq('worker_status', 'active');
+
+  if (!matchingPros?.length) return;
+
+  const formattedDate = new Date(date).toLocaleDateString('en-GB', {
+    weekday: 'short', day: 'numeric', month: 'short',
+  });
+  const formattedRate = proHourlyRateIQD.toLocaleString('en-US');
+  // Encode the shift link inside the message using || delimiter.
+  // Format: "display text||/path" — parsed by useNotifications hook.
+  const displayText = `New ${jobTitle} shift in ${city} on ${formattedDate} — ${formattedRate} IQD/hr. Tap to view and apply.`;
+  const message = `${displayText}||/pro/shifts/${shiftId}`;
+
+  const notifications = matchingPros.map((p: any) => ({
+    user_id: p.user_id,
+    message,
+  }));
+
+  await admin.from('notifications').insert(notifications);
 }

@@ -56,7 +56,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
                 </div>
                 <div>
                   <p className="text-white text-xs font-semibold">Sara Ahmed</p>
-                  <p className="text-white/40 text-xs">Head Waitress · Baghdad</p>
+                  <p className="text-white/40 text-xs">Head Waitress · Erbil</p>
                 </div>
                 {/* Stars */}
                 <div className="ml-auto flex gap-0.5">

@@ -284,29 +284,33 @@ function ApplicantCard({
       {/* Top section: identity + stats */}
       <div className="p-5">
         <div className="flex items-start gap-4">
-          <div className="w-14 h-14 rounded-full border-4 border-[#E7E2EF] bg-[#F7F4FC] overflow-hidden shrink-0">
+          <div className="w-14 h-14 rounded-full border-4 border-[#E7E2EF] bg-[#F7F4FC] overflow-hidden shrink-0 relative">
             {profile.photo_url ? (
               <Image
                 src={profile.photo_url}
-                alt={user.full_name}
+                alt={isAccepted ? user.full_name : 'Applicant'}
                 width={56}
                 height={56}
-                className="w-full h-full object-cover"
+                className={`w-full h-full object-cover ${!isAccepted ? 'blur-md scale-110' : ''}`}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-[#8B8299] text-xl font-semibold">
-                {user.full_name.charAt(0).toUpperCase()}
+                {isAccepted ? user.full_name.charAt(0).toUpperCase() : '?'}
               </div>
             )}
           </div>
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-bold text-[#12051F] text-base">{user.full_name}</span>
+              <span className="font-bold text-[#12051F] text-base">
+                {isAccepted
+                  ? user.full_name
+                  : `${user.full_name.split(' ')[0]} ${user.full_name.split(' ')[1]?.charAt(0) ?? ''}.`.trim()}
+              </span>
               <Badge variant={app.status} label={t(`business.applicants.${app.status}`)} />
             </div>
             <p className="text-sm text-[#8B8299] mt-0.5">{user.city}</p>
-            {user.phone && (
+            {isAccepted && user.phone && (
               <a
                 href={`tel:${user.phone}`}
                 className="inline-flex items-center gap-1 text-xs text-[#7426E8] font-semibold hover:underline mt-0.5"

@@ -9,7 +9,7 @@ export default async function BusinessShiftsPage() {
 
   const { data: shifts } = await supabase
     .from('shifts')
-    .select('*, business_locations ( branch_name, city, photos ), applications ( id, status )')
+    .select('*, business_locations ( branch_name, city, photos ), applications ( id, status, users!pro_id ( id, full_name, pro_profiles ( photo_url ) ) )')
     .eq('business_id', user.id)
     .order('date', { ascending: false });
 

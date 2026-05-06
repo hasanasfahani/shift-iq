@@ -50,4 +50,4 @@ export default async function ProProfilePage() {
   );
 }
 
-export const metadata = { title: 'Edit Profile' };
+export const metadata = { title: 'Profile' };

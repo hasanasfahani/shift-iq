@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useNotifications } from '@/hooks/useNotifications';
 
@@ -16,6 +17,7 @@ function timeAgo(dateStr: string): string {
 
 export default function NotificationBell() {
   const { t } = useTranslation();
+  const router = useRouter();
   const { notifications, unreadCount, markAllRead } = useNotifications();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -78,21 +80,30 @@ export default function NotificationBell() {
             </div>
           ) : (
             <ul className="divide-y divide-[#E7E2EF] max-h-96 overflow-y-auto">
-              {notifications.map((n) => (
-                <li
-                  key={n.id}
-                  className={`flex items-start gap-3 px-4 py-3 ${!n.is_read ? 'bg-[#F3F0FB]' : ''}`}
-                >
-                  {!n.is_read && (
-                    <span className="mt-1.5 w-2 h-2 rounded-full bg-[#7426E8] shrink-0" />
-                  )}
-                  {n.is_read && <span className="mt-1.5 w-2 h-2 shrink-0" />}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-[#12051F] leading-snug">{n.message}</p>
-                    <p className="text-xs text-[#8B8299] mt-0.5">{timeAgo(n.created_at)}</p>
-                  </div>
-                </li>
-              ))}
+              {notifications.map((n) => {
+                const inner = (
+                  <>
+                    <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${!n.is_read ? 'bg-[#7426E8]' : ''}`} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-[#12051F] leading-snug">{n.message}</p>
+                      <p className="text-xs text-[#8B8299] mt-0.5">{timeAgo(n.created_at)}</p>
+                    </div>
+                    {n.link && (
+                      <svg className="w-4 h-4 text-[#7426E8] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    )}
+                  </>
+                );
+                const cls = `flex items-start gap-3 px-4 py-3 ${!n.is_read ? 'bg-[#F3F0FB]' : ''} ${n.link ? 'cursor-pointer hover:bg-[#F7F4FC] transition-colors' : ''}`;
+                return n.link ? (
+                  <li key={n.id} className={cls} onClick={() => { setOpen(false); router.push(n.link!); }}>
+                    {inner}
+                  </li>
+                ) : (
+                  <li key={n.id} className={cls}>{inner}</li>
+                );
+              })}
             </ul>
           )}
         </div>

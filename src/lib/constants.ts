@@ -1,10 +1,11 @@
 import type { IraqiCity, BusinessType, JobTitle, ShiftType } from '@/types';
 
 export const CITIES: IraqiCity[] = [
-  'Baghdad',
   'Erbil',
-  'Basra',
   'Sulaymaniyah',
+  'Duhok',
+  'Baghdad',
+  'Basra',
   'Mosul',
   'Kirkuk',
   'Najaf',

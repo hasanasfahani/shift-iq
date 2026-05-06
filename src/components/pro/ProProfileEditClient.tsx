@@ -110,6 +110,7 @@ export default function ProProfileEditClient({ initialData }: Props) {
   const { toast, show, dismiss } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [isEditing, setIsEditing] = useState(false);
   const [activeSection, setActiveSection] = useState<Section>('personal');
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -166,6 +167,23 @@ export default function ProProfileEditClient({ initialData }: Props) {
     }
   }
 
+  function handleCancel() {
+    setFirstName(initialData.firstName || initialData.fullName.split(' ')[0] || '');
+    setLastName(initialData.lastName || initialData.fullName.split(' ').slice(1).join(' ') || '');
+    setPhone(initialData.phone);
+    setCity(initialData.city);
+    setPhotoUrl(initialData.photoUrl);
+    setDaysAvailability(initialData.daysAvailability);
+    setWeeklyHours(initialData.weeklyHours);
+    setWorkType(initialData.workType);
+    setShiftPreference(initialData.shiftPreference);
+    setRoles(initialData.roles);
+    setYearsPerRole(initialData.yearsPerRole);
+    setSkillsByRole(initialData.skillsByRole);
+    setBio(initialData.bio);
+    setIsEditing(false);
+  }
+
   async function handleSave() {
     setSaving(true);
     try {
@@ -203,6 +221,7 @@ export default function ProProfileEditClient({ initialData }: Props) {
       }
 
       show('Profile updated', 'success');
+      setIsEditing(false);
       router.refresh();
     } finally {
       setSaving(false);
@@ -283,8 +302,8 @@ export default function ProProfileEditClient({ initialData }: Props) {
       <div className="flex items-center gap-4 mb-6">
         {/* Avatar */}
         <div
-          className="relative shrink-0 cursor-pointer group"
-          onClick={() => fileInputRef.current?.click()}
+          className={`relative shrink-0 ${isEditing ? 'cursor-pointer group' : 'cursor-default'}`}
+          onClick={() => isEditing && fileInputRef.current?.click()}
         >
           <div className="w-16 h-16 rounded-2xl overflow-hidden ring-2 ring-[#E7E2EF] bg-gradient-to-br from-[#7426E8] to-[#5C1FBA]">
             {photoUrl ? (
@@ -294,7 +313,7 @@ export default function ProProfileEditClient({ initialData }: Props) {
                 {initials || '?'}
               </div>
             )}
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-2xl">
+            <div className={`absolute inset-0 bg-black/40 transition-opacity flex items-center justify-center rounded-2xl ${isEditing ? 'opacity-0 group-hover:opacity-100' : 'opacity-0'}`}>
               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -321,12 +340,14 @@ export default function ProProfileEditClient({ initialData }: Props) {
             {initialData.averageRating > 0 ? `${Number(initialData.averageRating).toFixed(1)} · ` : ''}
             {initialData.completedShifts} shift{initialData.completedShifts !== 1 ? 's' : ''} completed
           </p>
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="text-xs text-[#7426E8] font-semibold hover:underline mt-1"
-          >
-            Change photo
-          </button>
+          {isEditing && (
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="text-xs text-[#7426E8] font-semibold hover:underline mt-1"
+            >
+              Change photo
+            </button>
+          )}
         </div>
       </div>
 
@@ -362,12 +383,14 @@ export default function ProProfileEditClient({ initialData }: Props) {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 placeholder="First"
+                disabled={!isEditing}
               />
               <Input
                 label="Last name"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 placeholder="Last"
+                disabled={!isEditing}
               />
             </div>
             <Input
@@ -376,13 +399,15 @@ export default function ProProfileEditClient({ initialData }: Props) {
               onChange={(e) => setPhone(e.target.value)}
               placeholder="+964 7xx xxx xxxx"
               type="tel"
+              disabled={!isEditing}
             />
             <div>
               <label className="block text-sm font-semibold text-[#12051F] mb-1.5">City</label>
               <select
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
-                className="w-full px-3 py-2.5 border border-[#E7E2EF] bg-[#F3F0FB] rounded-xl text-sm text-[#12051F] focus:outline-none focus:ring-2 focus:ring-[#7426E8] focus:bg-white"
+                disabled={!isEditing}
+                className="w-full px-3 py-2.5 border border-[#E7E2EF] bg-[#F3F0FB] rounded-xl text-sm text-[#12051F] focus:outline-none focus:ring-2 focus:ring-[#7426E8] focus:bg-white disabled:opacity-60 disabled:cursor-default"
               >
                 <option value="">Select city</option>
                 {CITIES.map((c) => (
@@ -407,6 +432,7 @@ export default function ProProfileEditClient({ initialData }: Props) {
                     label={day}
                     active={daysAvailability.includes(day)}
                     onClick={() => setDaysAvailability((prev) => toggleArray(prev, day))}
+                    readOnly={!isEditing}
                   />
                 ))}
               </div>
@@ -421,6 +447,7 @@ export default function ProProfileEditClient({ initialData }: Props) {
                     label={opt}
                     active={weeklyHours === opt}
                     onClick={() => setWeeklyHours(weeklyHours === opt ? null : opt)}
+                    readOnly={!isEditing}
                   />
                 ))}
               </div>
@@ -435,6 +462,7 @@ export default function ProProfileEditClient({ initialData }: Props) {
                     label={opt}
                     active={workType.includes(opt)}
                     onClick={() => setWorkType((prev) => toggleArray(prev, opt))}
+                    readOnly={!isEditing}
                   />
                 ))}
               </div>
@@ -449,6 +477,7 @@ export default function ProProfileEditClient({ initialData }: Props) {
                     label={opt}
                     active={shiftPreference.includes(opt)}
                     onClick={() => setShiftPreference((prev) => toggleArray(prev, opt))}
+                    readOnly={!isEditing}
                   />
                 ))}
               </div>
@@ -466,6 +495,7 @@ export default function ProProfileEditClient({ initialData }: Props) {
                 <button
                   key={role}
                   type="button"
+                  disabled={!isEditing}
                   onClick={() => {
                     setRoles((prev) => {
                       if (prev.includes(role)) {
@@ -475,7 +505,7 @@ export default function ProProfileEditClient({ initialData }: Props) {
                       return toggleArray(prev, role);
                     });
                   }}
-                  className={`px-3 py-2.5 rounded-xl text-xs font-semibold text-left transition-colors border ${
+                  className={`px-3 py-2.5 rounded-xl text-xs font-semibold text-left transition-colors border disabled:cursor-default ${
                     roles.includes(role)
                       ? 'bg-[#7426E8] text-white border-[#7426E8]'
                       : 'bg-[#F3F0FB] text-[#8B8299] border-[#E7E2EF] hover:border-[#7426E8] hover:text-[#7426E8]'
@@ -501,6 +531,7 @@ export default function ProProfileEditClient({ initialData }: Props) {
                           min={0}
                           max={50}
                           placeholder="—"
+                          disabled={!isEditing}
                           value={yearsPerRole[role] ?? ''}
                           onChange={(e) => {
                             const val = e.target.value === '' ? undefined : parseInt(e.target.value);
@@ -510,7 +541,7 @@ export default function ProProfileEditClient({ initialData }: Props) {
                               return next;
                             });
                           }}
-                          className="w-16 rounded-lg border border-[#E7E2EF] bg-white px-2 py-1 text-sm text-center text-[#12051F] focus:outline-none focus:ring-2 focus:ring-[#7426E8]"
+                          className="w-16 rounded-lg border border-[#E7E2EF] bg-white px-2 py-1 text-sm text-center text-[#12051F] focus:outline-none focus:ring-2 focus:ring-[#7426E8] disabled:opacity-60 disabled:cursor-default"
                         />
                         <span className="text-xs text-[#8B8299]">yrs</span>
                       </div>
@@ -571,6 +602,7 @@ export default function ProProfileEditClient({ initialData }: Props) {
                               label={skill}
                               active={selectedSkills.includes(skill)}
                               onClick={() => toggleRoleSkill(role, skill)}
+                              readOnly={!isEditing}
                               small
                             />
                           )) : (
@@ -605,21 +637,23 @@ export default function ProProfileEditClient({ initialData }: Props) {
                         </p>
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteExperience(exp.id)}
-                      className="shrink-0 text-[#C9C4D2] hover:text-red-500 transition-colors p-1"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
+                    {isEditing && (
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteExperience(exp.id)}
+                        className="shrink-0 text-[#C9C4D2] hover:text-red-500 transition-colors p-1"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>
             )}
 
-            {showExpForm ? (
+            {isEditing && showExpForm ? (
               <div className="rounded-xl border border-[#E7E2EF] bg-[#F7F4FC] p-4 space-y-3">
                 <p className="text-sm font-bold text-[#12051F]">Add experience</p>
                 <Input
@@ -672,7 +706,7 @@ export default function ProProfileEditClient({ initialData }: Props) {
                   </Button>
                 </div>
               </div>
-            ) : (
+            ) : isEditing ? (
               <button
                 type="button"
                 onClick={() => setShowExpForm(true)}
@@ -683,7 +717,7 @@ export default function ProProfileEditClient({ initialData }: Props) {
                 </svg>
                 Add experience
               </button>
-            )}
+            ) : null}
           </div>
         )}
 
@@ -697,25 +731,30 @@ export default function ProProfileEditClient({ initialData }: Props) {
               </label>
               <textarea
                 value={bio}
-                onChange={(e) => { if (e.target.value.length <= 255) setBio(e.target.value); }}
+                readOnly={!isEditing}
+                onChange={(e) => { if (isEditing && e.target.value.length <= 255) setBio(e.target.value); }}
                 placeholder="Tell businesses about your experience, work style, and what makes you a great hire..."
                 rows={6}
-                className="w-full px-3 py-2.5 border border-[#E7E2EF] bg-[#F3F0FB] rounded-xl text-sm text-[#12051F] placeholder:text-[#C9C4D2] focus:outline-none focus:ring-2 focus:ring-[#7426E8] focus:bg-white resize-none"
+                className={`w-full px-3 py-2.5 border border-[#E7E2EF] rounded-xl text-sm text-[#12051F] placeholder:text-[#C9C4D2] focus:outline-none resize-none ${isEditing ? 'bg-[#F3F0FB] focus:ring-2 focus:ring-[#7426E8] focus:bg-white' : 'bg-[#F7F4FC] cursor-default'}`}
               />
               <p className="text-xs text-[#C9C4D2] text-right mt-1">{bio.length}/255</p>
             </div>
           </div>
         )}
 
-        {/* Save button (not shown for experience — that section has inline saves) */}
-        {activeSection !== 'experience' && (
-          <div className="mt-6 pt-5 border-t border-[#E7E2EF] flex items-center justify-between gap-4">
-            <p className="text-xs text-[#C9C4D2]">Changes apply to all sections when you save</p>
-            <Button size="md" loading={saving || uploading} onClick={handleSave}>
-              Save changes
-            </Button>
-          </div>
-        )}
+        {/* Bottom action bar */}
+        <div className="mt-6 pt-5 border-t border-[#E7E2EF] flex items-center justify-end gap-3">
+          {isEditing ? (
+            <>
+              <Button variant="ghost" size="md" onClick={handleCancel}>Cancel</Button>
+              {activeSection !== 'experience' && (
+                <Button size="md" loading={saving || uploading} onClick={handleSave}>Save changes</Button>
+              )}
+            </>
+          ) : (
+            <Button size="md" onClick={() => setIsEditing(true)}>Edit profile</Button>
+          )}
+        </div>
       </div>
 
       {toast && <Toast message={toast.message} type={toast.type} onDismiss={dismiss} />}
@@ -733,18 +772,20 @@ function SectionHeading({ title, subtitle }: { title: string; subtitle: string }
 }
 
 function ToggleChip({
-  label, active, onClick, small,
+  label, active, onClick, small, readOnly,
 }: {
   label: string;
   active: boolean;
   onClick: () => void;
   small?: boolean;
+  readOnly?: boolean;
 }) {
   return (
     <button
       type="button"
+      disabled={readOnly}
       onClick={onClick}
-      className={`${small ? 'px-2.5 py-1 text-xs' : 'px-3 py-1.5 text-sm'} rounded-full font-medium border transition-colors ${
+      className={`${small ? 'px-2.5 py-1 text-xs' : 'px-3 py-1.5 text-sm'} rounded-full font-medium border transition-colors disabled:cursor-default ${
         active
           ? 'bg-[#7426E8] text-white border-[#7426E8]'
           : 'bg-[#F3F0FB] text-[#8B8299] border-[#E7E2EF] hover:border-[#7426E8] hover:text-[#7426E8]'
